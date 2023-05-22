@@ -1,113 +1,114 @@
-import Image from 'next/image'
+"use client";
+import { useState } from "react";
+interface Item {
+  top: string;
+  bottom: string;
+}
+
+const Accordion = ({ data }: { data: Item[] }) => {
+  const [accordionIndex, setAccordionIndex] = useState<number | null>(null);
+
+  const handleAccordionIndex = (val: number) => {
+    if (val === accordionIndex) {
+      setAccordionIndex(null);
+    } else {
+      setAccordionIndex(val);
+    }
+  };
+
+  return (
+    // accordion
+    <div>
+      {/* item */}
+      {data.map((item, idx) => (
+        <div className="border border-white transition-all">
+          {/* trigger */}
+          <button
+            className="flex justify-between w-full p-4 hover:bg-white/20 text-left"
+            onClick={() => {
+              handleAccordionIndex(idx);
+            }}
+          >
+            <span>{item.top}</span>
+            <span>
+              <svg
+                width="24px"
+                height="24px"
+                viewBox="0 0 24 24"
+                className={`transition-[transform] ${
+                  idx === accordionIndex ? "rotate-180" : "rotate-0"
+                }`}
+                stroke="white"
+                strokeWidth={2}
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5.16108 10.0731C4.45387 9.2649 5.02785 8 6.1018 8H17.898C18.972 8 19.5459 9.2649 18.8388 10.0731L13.3169 16.3838C12.6197 17.1806 11.3801 17.1806 10.6829 16.3838L5.16108 10.0731ZM6.65274 9.5L11.8118 15.396C11.9114 15.5099 12.0885 15.5099 12.1881 15.396L17.3471 9.5H6.65274Z"
+                  fill="#212121"
+                />
+              </svg>
+            </span>
+          </button>
+          {/* content */}
+          <div
+            className={`transition-[height, visibility] duration-500 min-h-0 
+            ${idx === accordionIndex ? "visible min-h-8 p-4" : "invisible"}
+            `}
+          >
+            <div
+              className={` ${idx === accordionIndex ? "block" : "hidden"} 
+            `}
+            >
+              {item.bottom}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 export default function Home() {
+  const [data, setData] = useState<Item[]>([]);
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main className=" flex justify-center items-center h-full">
+      <div className="max-w-6xl">
+        <form
+          className="flex flex-col gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const target = e.target as typeof e.target & {
+              top: { value: string };
+              bottom: { value: string };
+            };
+            const topVal = target.top.value;
+            const bottomVal = target.bottom.value;
+
+            target.top.value = "";
+            target.bottom.value = "";
+
+            setData([
+              ...data,
+              {
+                top: topVal,
+                bottom: bottomVal,
+              },
+            ]);
+          }}
+        >
+          <label htmlFor="top-value">Top Value</label>
+          <input type="text" className="text-black rounded-sm" name="top" />
+          <label htmlFor="bottom-value">Bottom Value</label>
+          <input type="text" className="text-black rounded-sm" name="bottom" />
+          <button
+            type="submit"
+            className="rounded-sm hover:bg-white/25 border border-white my-2"
           >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+            Submit
+          </button>
+        </form>
+        <Accordion data={data} />
       </div>
     </main>
-  )
+  );
 }
