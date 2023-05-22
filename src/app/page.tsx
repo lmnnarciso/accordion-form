@@ -21,7 +21,7 @@ const Accordion = ({ data }: { data: Item[] }) => {
     <div>
       {/* item */}
       {data.map((item, idx) => (
-        <div className="border border-white transition-all">
+        <div className="border border-white transition-all" key={idx}>
           {/* trigger */}
           <button
             className="flex justify-between w-full p-4 hover:bg-white/20 text-left"
